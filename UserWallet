@@ -1,0 +1,75 @@
+// Create a new wallet for the user
+GET /user/wallet
+
+{
+    "response": "Wallet successfully created!"
+}
+
+// Each user can only have a single wallet
+{
+    "status": 400,
+    "message": "User already has a wallet",
+}
+
+// The initial account balance is 0
+GET /user/balance
+
+{
+    "account balance": 0
+}
+
+// Perform a consumer transaction on the account
+GET /user/withdrawal/100
+
+{
+    "id": 2,
+    "type": "Consume",
+    "amount": 100,
+}
+
+// Perform a refund transaction on the account
+GET /user/refund/20
+
+{
+    "id": 1,
+    "type": "Refund",
+    "amount": 20,
+}
+public Map<String, Object> applyForRefun(HttpServletRequest request, HttpServletResponse response) {
+　　
+　　Map<String, String> resultMap = new HashMap<String, String>();
+  
+　　　　String out_refund_no = WXPayUtil.generateUUID();
+　　　　String price = sale.getProduct_saleprice().toString();
+　　　　Double total_price = Double.valueOf(price);
+　　　　
+　　　　String refund_fee = Integer.toString((int) (total_price * 20));
+    
+// Details of amount changes
+GET /user/history/2
+
+[
+    {
+        "id": 2,
+        "type": "Consume",
+        "amount": 100,
+    },
+    {
+        "id": 1,
+        "type": "Refund",
+        "amount": 20,
+    }
+]
+
+// Concurrency
+@Bean(name = "asyncExecutor")
+    public Executor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("WalletService-");
+        executor.initialize();
+        return executor;
+    }
+    
